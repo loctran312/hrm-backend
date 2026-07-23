@@ -10,6 +10,7 @@ import { LeaveRequestsService } from './leave-requests.service';
 import {
   CreateLeaveRequestDto,
   createLeaveRequestSchema,
+  leaveRequestStatusFilterSchema,
   RejectLeaveRequestDto,
   rejectLeaveRequestSchema,
 } from './dto/leave-request.dto';
@@ -58,7 +59,7 @@ export class LeaveRequestsController {
   findAll(
     @Query(new ZodValidationPipe(paginationQuerySchema)) query: PaginationQueryDto,
     @Query('employeeId') employeeId?: string,
-    @Query('status') status?: string,
+    @Query('status', new ZodValidationPipe(leaveRequestStatusFilterSchema)) status?: string,
   ) {
     return this.leaveRequestsService.findAll(query, { employeeId, status });
   }

@@ -6,7 +6,7 @@ import { AppConfigService } from '../config/env.config';
 export class PrismaService extends PrismaClient implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(PrismaService.name);
 
-  constructor(private readonly appConfig: AppConfigService) {
+  constructor(appConfig: AppConfigService) {
     super({
       datasources: {
         db: { url: appConfig.databaseUrl },

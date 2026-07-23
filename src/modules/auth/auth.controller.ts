@@ -18,7 +18,7 @@ export class AuthController {
   @Public()
   @Post('register')
   @ApiOperation({ summary: 'Đăng ký tài khoản mới (chưa gắn Employee)' })
-  register(@Body(new ZodValidationPipe(registerSchema)) dto: RegisterDto) {
+  register(@Body(new ZodValidationPipe(registerSchema)) dto: RegisterDto): Promise<{ id: string; email: string }> {
     return this.authService.register(dto);
   }
 
@@ -26,7 +26,7 @@ export class AuthController {
   @Post('login')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Đăng nhập, trả về access token + refresh token' })
-  login(@Body(new ZodValidationPipe(loginSchema)) dto: LoginDto) {
+  login(@Body(new ZodValidationPipe(loginSchema)) dto: LoginDto): Promise<{ accessToken: string; refreshToken: string }> {
     return this.authService.login(dto);
   }
 
@@ -34,7 +34,7 @@ export class AuthController {
   @Post('refresh')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Cấp access token + refresh token mới (rotation)' })
-  refresh(@Body(new ZodValidationPipe(refreshTokenSchema)) dto: RefreshTokenDto) {
+  refresh(@Body(new ZodValidationPipe(refreshTokenSchema)) dto: RefreshTokenDto): Promise<{ accessToken: string; refreshToken: string }> {
     return this.authService.refresh(dto.refreshToken);
   }
 
@@ -42,7 +42,7 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Thu hồi refresh token hiện tại' })
-  logout(@Body(new ZodValidationPipe(refreshTokenSchema)) dto: RefreshTokenDto) {
+  logout(@Body(new ZodValidationPipe(refreshTokenSchema)) dto: RefreshTokenDto): Promise<void> {
     return this.authService.logout(dto.refreshToken);
   }
 
@@ -53,7 +53,7 @@ export class AuthController {
   changePassword(
     @CurrentUser() user: AuthenticatedUser,
     @Body(new ZodValidationPipe(changePasswordSchema)) dto: ChangePasswordDto,
-  ) {
+  ): Promise<void> {
     return this.authService.changePassword(user.userId, dto);
   }
 }

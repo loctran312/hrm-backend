@@ -19,3 +19,7 @@ export const rejectLeaveRequestSchema = z.object({
 });
 
 export type RejectLeaveRequestDto = z.infer<typeof rejectLeaveRequestSchema>;
+
+export const leaveRequestStatusFilterSchema = z
+  .enum(['PENDING', 'APPROVED', 'REJECTED', 'CANCELLED'])
+  .optional();
