@@ -1,4 +1,4 @@
-import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Post } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Public } from '../../common/decorators/public.decorator';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
@@ -48,6 +48,15 @@ export class AuthController {
   @ApiOperation({ summary: 'Thu hồi refresh token hiện tại' })
   logout(@Body(new ZodValidationPipe(refreshTokenSchema)) dto: RefreshTokenDto): Promise<void> {
     return this.authService.logout(dto.refreshToken);
+  }
+
+  @Get('me')
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Lấy thông tin tài khoản đang đăng nhập (userId, email, permissions) — decode trực tiếp từ JWT, không query DB',
+  })
+  getMe(@CurrentUser() user: AuthenticatedUser): AuthenticatedUser {
+    return user;
   }
 
   @Post('change-password')
