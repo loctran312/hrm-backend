@@ -1,9 +1,9 @@
 import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Post } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { RequirePermissions } from '../../common/decorators/require-permissions.decorator';
 import { ZodValidationPipe } from '../../common/pipes/zod-validation.pipe';
 import { LeaveTypesService } from './leave-types.service';
-import { CreateLeaveTypeDto, createLeaveTypeSchema } from './dto/leave-type.dto';
+import { CreateLeaveTypeDto, createLeaveTypeSchema, CreateLeaveTypeSwaggerDto } from './dto/leave-type.dto';
 
 @ApiTags('Leave Types')
 @ApiBearerAuth()
@@ -19,6 +19,7 @@ export class LeaveTypesController {
 
   @Post()
   @RequirePermissions('leave:manage-types')
+  @ApiBody({ type: CreateLeaveTypeSwaggerDto })
   @ApiOperation({ summary: 'Tạo loại nghỉ phép mới (HR/Admin)' })
   create(@Body(new ZodValidationPipe(createLeaveTypeSchema)) dto: CreateLeaveTypeDto) {
     return this.leaveTypesService.create(dto);

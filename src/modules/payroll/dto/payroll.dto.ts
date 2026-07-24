@@ -1,3 +1,4 @@
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { z } from 'zod';
 
 export const calculatePayrollSchema = z.object({
@@ -9,3 +10,20 @@ export const calculatePayrollSchema = z.object({
 });
 
 export type CalculatePayrollDto = z.infer<typeof calculatePayrollSchema>;
+
+export class CalculatePayrollSwaggerDto {
+  @ApiProperty({ example: 'clx3m2n1o0000ttgjkl789mno', description: 'ID nhân viên (GET /employees)' })
+  employeeId!: string;
+
+  @ApiProperty({ example: 8, minimum: 1, maximum: 12, description: 'Tháng tính lương (1-12)' })
+  periodMonth!: number;
+
+  @ApiProperty({ example: 2026, minimum: 2000, description: 'Năm tính lương' })
+  periodYear!: number;
+
+  @ApiPropertyOptional({ example: 1000000, default: 0, description: 'Tổng phụ cấp (VND)' })
+  totalAllowance?: number;
+
+  @ApiPropertyOptional({ example: 200000, default: 0, description: 'Tổng khấu trừ (VND)' })
+  totalDeduction?: number;
+}

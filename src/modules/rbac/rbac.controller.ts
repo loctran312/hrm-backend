@@ -1,9 +1,9 @@
 import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { RequirePermissions } from '../../common/decorators/require-permissions.decorator';
 import { ZodValidationPipe } from '../../common/pipes/zod-validation.pipe';
 import { RbacService } from './rbac.service';
-import { AssignRoleDto, assignRoleSchema } from './dto/assign-role.dto';
+import { AssignRoleDto, assignRoleSchema, AssignRoleSwaggerDto } from './dto/assign-role.dto';
 
 @ApiTags('RBAC')
 @ApiBearerAuth()
@@ -27,6 +27,7 @@ export class RbacController {
 
   @Post('users/:userId/roles')
   @RequirePermissions('role:manage')
+  @ApiBody({ type: AssignRoleSwaggerDto })
   @ApiOperation({ summary: 'Gán role cho user' })
   assignRole(
     @Param('userId') userId: string,

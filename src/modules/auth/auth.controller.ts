@@ -1,14 +1,14 @@
 import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Public } from '../../common/decorators/public.decorator';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
 import { ZodValidationPipe } from '../../common/pipes/zod-validation.pipe';
 import { AuthenticatedUser } from '../../common/types/auth.type';
 import { AuthService } from './auth.service';
-import { RegisterDto, registerSchema } from './dto/register.dto';
-import { LoginDto, loginSchema } from './dto/login.dto';
-import { RefreshTokenDto, refreshTokenSchema } from './dto/refresh-token.dto';
-import { ChangePasswordDto, changePasswordSchema } from './dto/change-password.dto';
+import { RegisterDto, registerSchema, RegisterSwaggerDto } from './dto/register.dto';
+import { LoginDto, loginSchema, LoginSwaggerDto } from './dto/login.dto';
+import { RefreshTokenDto, refreshTokenSchema, RefreshTokenSwaggerDto } from './dto/refresh-token.dto';
+import { ChangePasswordDto, changePasswordSchema, ChangePasswordSwaggerDto } from './dto/change-password.dto';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -17,6 +17,7 @@ export class AuthController {
 
   @Public()
   @Post('register')
+  @ApiBody({ type: RegisterSwaggerDto })
   @ApiOperation({ summary: 'Đăng ký tài khoản mới (chưa gắn Employee)' })
   register(@Body(new ZodValidationPipe(registerSchema)) dto: RegisterDto): Promise<{ id: string; email: string }> {
     return this.authService.register(dto);
@@ -25,6 +26,7 @@ export class AuthController {
   @Public()
   @Post('login')
   @HttpCode(HttpStatus.OK)
+  @ApiBody({ type: LoginSwaggerDto })
   @ApiOperation({ summary: 'Đăng nhập, trả về access token + refresh token' })
   login(@Body(new ZodValidationPipe(loginSchema)) dto: LoginDto): Promise<{ accessToken: string; refreshToken: string }> {
     return this.authService.login(dto);
@@ -33,6 +35,7 @@ export class AuthController {
   @Public()
   @Post('refresh')
   @HttpCode(HttpStatus.OK)
+  @ApiBody({ type: RefreshTokenSwaggerDto })
   @ApiOperation({ summary: 'Cấp access token + refresh token mới (rotation)' })
   refresh(@Body(new ZodValidationPipe(refreshTokenSchema)) dto: RefreshTokenDto): Promise<{ accessToken: string; refreshToken: string }> {
     return this.authService.refresh(dto.refreshToken);
@@ -41,6 +44,7 @@ export class AuthController {
   @Post('logout')
   @HttpCode(HttpStatus.OK)
   @ApiBearerAuth()
+  @ApiBody({ type: RefreshTokenSwaggerDto })
   @ApiOperation({ summary: 'Thu hồi refresh token hiện tại' })
   logout(@Body(new ZodValidationPipe(refreshTokenSchema)) dto: RefreshTokenDto): Promise<void> {
     return this.authService.logout(dto.refreshToken);
@@ -49,6 +53,7 @@ export class AuthController {
   @Post('change-password')
   @HttpCode(HttpStatus.OK)
   @ApiBearerAuth()
+  @ApiBody({ type: ChangePasswordSwaggerDto })
   @ApiOperation({ summary: 'Đổi mật khẩu, thu hồi toàn bộ refresh token hiện có' })
   changePassword(
     @CurrentUser() user: AuthenticatedUser,

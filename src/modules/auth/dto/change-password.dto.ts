@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 import { z } from 'zod';
 
 export const changePasswordSchema = z.object({
@@ -6,3 +7,11 @@ export const changePasswordSchema = z.object({
 });
 
 export type ChangePasswordDto = z.infer<typeof changePasswordSchema>;
+
+export class ChangePasswordSwaggerDto {
+  @ApiProperty({ example: 'ChangeMe123!' })
+  oldPassword!: string;
+
+  @ApiProperty({ example: 'NewStrongPassword456!', minLength: 8 })
+  newPassword!: string;
+}

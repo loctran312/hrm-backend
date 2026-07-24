@@ -1,3 +1,4 @@
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { z } from 'zod';
 
 export const createDepartmentSchema = z.object({
@@ -12,3 +13,26 @@ export const updateDepartmentSchema = createDepartmentSchema.partial().extend({
 });
 
 export type UpdateDepartmentDto = z.infer<typeof updateDepartmentSchema>;
+
+export class CreateDepartmentSwaggerDto {
+  @ApiProperty({ example: 'Phòng Nhân sự', description: 'Tên phòng ban, phải duy nhất' })
+  name!: string;
+
+  @ApiPropertyOptional({ example: 'Quản lý tuyển dụng, đào tạo và phúc lợi nhân viên' })
+  description?: string;
+}
+
+export class UpdateDepartmentSwaggerDto {
+  @ApiPropertyOptional({ example: 'Phòng Nhân sự' })
+  name?: string;
+
+  @ApiPropertyOptional({ example: 'Quản lý tuyển dụng, đào tạo và phúc lợi nhân viên' })
+  description?: string;
+
+  @ApiPropertyOptional({
+    example: null,
+    nullable: true,
+    description: 'ID của Employee làm trưởng phòng. Truyền null để gỡ trưởng phòng hiện tại.',
+  })
+  headEmployeeId?: string | null;
+}

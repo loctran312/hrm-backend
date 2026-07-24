@@ -1,10 +1,18 @@
 import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Post, Put, Query } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { RequirePermissions } from '../../common/decorators/require-permissions.decorator';
 import { ZodValidationPipe } from '../../common/pipes/zod-validation.pipe';
+import { ApiPaginatedQuery } from '../../common/decorators/api-paginated-query.decorator';
 import { paginationQuerySchema, PaginationQueryDto } from '../../common/dto/pagination-query.dto';
 import { PositionsService } from './positions.service';
-import { CreatePositionDto, createPositionSchema, UpdatePositionDto, updatePositionSchema } from './dto/position.dto';
+import {
+  CreatePositionDto,
+  createPositionSchema,
+  CreatePositionSwaggerDto,
+  UpdatePositionDto,
+  updatePositionSchema,
+  UpdatePositionSwaggerDto,
+} from './dto/position.dto';
 
 @ApiTags('Positions')
 @ApiBearerAuth()
@@ -14,6 +22,7 @@ export class PositionsController {
 
   @Get()
   @RequirePermissions('position:view')
+  @ApiPaginatedQuery()
   @ApiQuery({ name: 'departmentId', required: false })
   @ApiOperation({ summary: 'Danh sách chức danh (phân trang, có thể lọc theo phòng ban)' })
   findAll(
@@ -32,6 +41,7 @@ export class PositionsController {
 
   @Post()
   @RequirePermissions('position:create')
+  @ApiBody({ type: CreatePositionSwaggerDto })
   @ApiOperation({ summary: 'Tạo chức danh mới' })
   create(@Body(new ZodValidationPipe(createPositionSchema)) dto: CreatePositionDto) {
     return this.positionsService.create(dto);
@@ -39,6 +49,7 @@ export class PositionsController {
 
   @Put(':id')
   @RequirePermissions('position:update')
+  @ApiBody({ type: UpdatePositionSwaggerDto })
   @ApiOperation({ summary: 'Cập nhật chức danh' })
   update(
     @Param('id') id: string,

@@ -1,13 +1,21 @@
 import { Body, Controller, Get, Post, Query } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { RequirePermissions } from '../../common/decorators/require-permissions.decorator';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
 import { ZodValidationPipe } from '../../common/pipes/zod-validation.pipe';
+import { ApiPaginatedQuery } from '../../common/decorators/api-paginated-query.decorator';
 import { paginationQuerySchema, PaginationQueryDto } from '../../common/dto/pagination-query.dto';
 import { AuthenticatedUser } from '../../common/types/auth.type';
 import { EmployeesService } from '../employees/employees.service';
 import { AttendanceService } from './attendance.service';
-import { CheckInDto, checkInSchema, CheckOutDto, checkOutSchema } from './dto/check-in-out.dto';
+import {
+  CheckInDto,
+  checkInSchema,
+  CheckInSwaggerDto,
+  CheckOutDto,
+  checkOutSchema,
+  CheckOutSwaggerDto,
+} from './dto/check-in-out.dto';
 
 @ApiTags('Attendance')
 @ApiBearerAuth()
@@ -19,6 +27,7 @@ export class AttendanceController {
   ) {}
 
   @Post('me/check-in')
+  @ApiBody({ type: CheckInSwaggerDto })
   @ApiOperation({ summary: 'Check-in cho chính mình' })
   async checkIn(
     @CurrentUser() user: AuthenticatedUser,
@@ -29,6 +38,7 @@ export class AttendanceController {
   }
 
   @Post('me/check-out')
+  @ApiBody({ type: CheckOutSwaggerDto })
   @ApiOperation({ summary: 'Check-out cho chính mình' })
   async checkOut(
     @CurrentUser() user: AuthenticatedUser,
@@ -39,6 +49,7 @@ export class AttendanceController {
   }
 
   @Get('me')
+  @ApiPaginatedQuery()
   @ApiOperation({ summary: 'Lịch sử chấm công của chính mình (phân trang)' })
   async findMine(
     @CurrentUser() user: AuthenticatedUser,
@@ -50,6 +61,7 @@ export class AttendanceController {
 
   @Get()
   @RequirePermissions('attendance:view')
+  @ApiPaginatedQuery()
   @ApiQuery({ name: 'employeeId', required: false })
   @ApiOperation({ summary: 'Lịch sử chấm công toàn hệ thống (HR/Manager, filter theo nhân viên)' })
   findAll(

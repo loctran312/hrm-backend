@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 import { z } from 'zod';
 
 export const assignRoleSchema = z.object({
@@ -5,3 +6,8 @@ export const assignRoleSchema = z.object({
 });
 
 export type AssignRoleDto = z.infer<typeof assignRoleSchema>;
+
+export class AssignRoleSwaggerDto {
+  @ApiProperty({ example: 'clx1a2b3c0000ttgxyz123abc', description: 'ID của Role (lấy từ GET /rbac/roles)' })
+  roleId!: string;
+}

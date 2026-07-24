@@ -1,13 +1,14 @@
 import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { RequirePermissions } from '../../common/decorators/require-permissions.decorator';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
 import { ZodValidationPipe } from '../../common/pipes/zod-validation.pipe';
+import { ApiPaginatedQuery } from '../../common/decorators/api-paginated-query.decorator';
 import { paginationQuerySchema, PaginationQueryDto } from '../../common/dto/pagination-query.dto';
 import { AuthenticatedUser } from '../../common/types/auth.type';
 import { EmployeesService } from '../employees/employees.service';
 import { PayrollService } from './payroll.service';
-import { CalculatePayrollDto, calculatePayrollSchema } from './dto/payroll.dto';
+import { CalculatePayrollDto, calculatePayrollSchema, CalculatePayrollSwaggerDto } from './dto/payroll.dto';
 
 @ApiTags('Payroll')
 @ApiBearerAuth()
@@ -19,6 +20,7 @@ export class PayrollController {
   ) {}
 
   @Get('me')
+  @ApiPaginatedQuery()
   @ApiOperation({ summary: 'Xem phiếu lương của chính mình' })
   async findMine(
     @CurrentUser() user: AuthenticatedUser,
@@ -30,6 +32,7 @@ export class PayrollController {
 
   @Get()
   @RequirePermissions('payroll:view')
+  @ApiPaginatedQuery()
   @ApiQuery({ name: 'employeeId', required: false })
   @ApiQuery({ name: 'periodMonth', required: false })
   @ApiQuery({ name: 'periodYear', required: false })
@@ -49,6 +52,7 @@ export class PayrollController {
 
   @Post('calculate')
   @RequirePermissions('payroll:manage')
+  @ApiBody({ type: CalculatePayrollSwaggerDto })
   @ApiOperation({ summary: 'Tính lương cho 1 nhân viên trong 1 kỳ (HR/Admin)' })
   calculate(@Body(new ZodValidationPipe(calculatePayrollSchema)) dto: CalculatePayrollDto) {
     return this.payrollService.calculate(dto);

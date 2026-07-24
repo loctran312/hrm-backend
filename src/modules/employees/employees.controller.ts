@@ -1,12 +1,20 @@
 import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Post, Put, Query } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { RequirePermissions } from '../../common/decorators/require-permissions.decorator';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
 import { ZodValidationPipe } from '../../common/pipes/zod-validation.pipe';
+import { ApiPaginatedQuery } from '../../common/decorators/api-paginated-query.decorator';
 import { paginationQuerySchema, PaginationQueryDto } from '../../common/dto/pagination-query.dto';
 import { AuthenticatedUser } from '../../common/types/auth.type';
 import { EmployeesService } from './employees.service';
-import { CreateEmployeeDto, createEmployeeSchema, UpdateEmployeeDto, updateEmployeeSchema } from './dto/employee.dto';
+import {
+  CreateEmployeeDto,
+  createEmployeeSchema,
+  CreateEmployeeSwaggerDto,
+  UpdateEmployeeDto,
+  updateEmployeeSchema,
+  UpdateEmployeeSwaggerDto,
+} from './dto/employee.dto';
 
 @ApiTags('Employees')
 @ApiBearerAuth()
@@ -22,6 +30,7 @@ export class EmployeesController {
 
   @Get()
   @RequirePermissions('employee:view')
+  @ApiPaginatedQuery()
   @ApiQuery({ name: 'departmentId', required: false })
   @ApiQuery({ name: 'positionId', required: false })
   @ApiOperation({ summary: 'Danh sách nhân viên (phân trang, filter theo phòng ban/chức danh)' })
@@ -42,6 +51,7 @@ export class EmployeesController {
 
   @Post()
   @RequirePermissions('employee:create')
+  @ApiBody({ type: CreateEmployeeSwaggerDto })
   @ApiOperation({ summary: 'Tạo hồ sơ nhân viên mới' })
   create(@Body(new ZodValidationPipe(createEmployeeSchema)) dto: CreateEmployeeDto) {
     return this.employeesService.create(dto);
@@ -49,6 +59,7 @@ export class EmployeesController {
 
   @Put(':id')
   @RequirePermissions('employee:update')
+  @ApiBody({ type: UpdateEmployeeSwaggerDto })
   @ApiOperation({ summary: 'Cập nhật hồ sơ nhân viên' })
   update(
     @Param('id') id: string,
