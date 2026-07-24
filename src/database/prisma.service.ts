@@ -11,7 +11,6 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
       datasources: {
         db: { url: appConfig.databaseUrl },
       },
-      log: appConfig.isProduction ? ['error', 'warn'] : ['error', 'warn', 'query'],
     });
   }
 
