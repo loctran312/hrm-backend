@@ -17,6 +17,7 @@ import { AttendanceModule } from './modules/attendance/attendance.module';
 import { LeaveTypesModule } from './modules/leave-types/leave-types.module';
 import { LeaveRequestsModule } from './modules/leave-requests/leave-requests.module';
 import { PayrollModule } from './modules/payroll/payroll.module';
+import { DashboardModule } from './modules/dashboard/dashboard.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { PayrollModule } from './modules/payroll/payroll.module';
     LeaveTypesModule,
     LeaveRequestsModule,
     PayrollModule,
+    DashboardModule,
   ],
   providers: [
     {

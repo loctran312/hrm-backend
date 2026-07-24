@@ -22,6 +22,7 @@ const PERMISSIONS = [
   'leave:manage-types',
   'payroll:view',
   'payroll:manage',
+  'dashboard:view',
   'role:manage',
   'permission:manage',
 ];
@@ -47,8 +48,17 @@ const ROLE_PERMISSIONS: Record<string, string[]> = {
     'leave:manage-types',
     'payroll:view',
     'payroll:manage',
+    'dashboard:view',
   ],
-  Manager: ['employee:view', 'department:view', 'position:view', 'attendance:view', 'leave:view', 'leave:approve'],
+  Manager: [
+    'employee:view',
+    'department:view',
+    'position:view',
+    'attendance:view',
+    'leave:view',
+    'leave:approve',
+    'dashboard:view',
+  ],
   Employee: [],
 };
 
